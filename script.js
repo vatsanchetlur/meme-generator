@@ -5,6 +5,8 @@ const generateBtn = document.getElementById('generate');
 const downloadBtn = document.getElementById('download');
 const fontSizeSlider = document.getElementById('fontSizeSlider');
 const textColorPicker = document.getElementById('textColor');
+const openEmojiPickerBtn = document.getElementById('openEmojiPicker');
+const emojiCard = document.getElementById('emojiCard');
 const canvas = document.getElementById('memeCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -31,6 +33,7 @@ uploadedImage.onload = () => {
   drawMeme();
 };
 
+// Setup initial draggable texts
 function setupTexts() {
   texts = [
     {
@@ -64,12 +67,12 @@ function drawMeme() {
     ctx.strokeStyle = 'black';
     ctx.lineWidth = 3;
     ctx.textAlign = 'center';
-    ctx.fillText(t.text.toUpperCase(), t.x, t.y);
-    ctx.strokeText(t.text.toUpperCase(), t.x, t.y);
+    ctx.fillText(t.text, t.x, t.y);
+    ctx.strokeText(t.text, t.x, t.y);
   });
 }
 
-// Update text objects LIVE when user types
+// Update text objects live
 topTextInput.addEventListener('input', () => {
   texts[0].text = topTextInput.value;
   drawMeme();
@@ -81,7 +84,6 @@ bottomTextInput.addEventListener('input', () => {
 
 // Handle Generate Button
 generateBtn.addEventListener('click', () => {
-  // No reset! Just update styles and redraw
   texts.forEach(t => {
     t.fontSize = parseInt(fontSizeSlider.value);
     t.color = textColorPicker.value;
@@ -121,9 +123,9 @@ canvas.addEventListener('mouseup', () => {
 });
 
 function getMousePos(canvas, evt) {
-  const rect = canvas.getBoundingClientRect(); // Size of canvas on screen
-  const scaleX = canvas.width / rect.width;    // Scale factor for X
-  const scaleY = canvas.height / rect.height;  // Scale factor for Y
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
 
   return {
     x: (evt.clientX - rect.left) * scaleX,
@@ -142,3 +144,26 @@ function isMouseOnText(t, pos) {
     pos.y <= t.y
   );
 }
+
+// 🎯 Emoji Picker Events
+openEmojiPickerBtn.addEventListener('click', () => {
+  emojiCard.style.display = (emojiCard.style.display === 'none') ? 'flex' : 'none';
+});
+
+// Handle emoji clicks
+document.querySelectorAll('.emoji').forEach(emojiEl => {
+  emojiEl.addEventListener('click', () => {
+    const emoji = emojiEl.textContent;
+
+    if (document.activeElement === topTextInput) {
+      topTextInput.value += emoji;
+      texts[0].text = topTextInput.value;
+    } else if (document.activeElement === bottomTextInput) {
+      bottomTextInput.value += emoji;
+      texts[1].text = bottomTextInput.value;
+    }
+
+    drawMeme();
+    emojiCard.style.display = 'none'; // hide after picking
+  });
+});
