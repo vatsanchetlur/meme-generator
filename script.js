@@ -24,11 +24,13 @@ imageUpload.addEventListener('change', (e) => {
 });
 
 uploadedImage.onload = () => {
+  canvas.width = uploadedImage.width;
+  canvas.height = uploadedImage.height;
+
   setupTexts();
   drawMeme();
 };
 
-// Setup initial draggable texts
 function setupTexts() {
   texts = [
     {
