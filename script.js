@@ -121,10 +121,13 @@ canvas.addEventListener('mouseup', () => {
 });
 
 function getMousePos(canvas, evt) {
-  const rect = canvas.getBoundingClientRect();
+  const rect = canvas.getBoundingClientRect(); // Size of canvas on screen
+  const scaleX = canvas.width / rect.width;    // Scale factor for X
+  const scaleY = canvas.height / rect.height;  // Scale factor for Y
+
   return {
-    x: evt.clientX - rect.left,
-    y: evt.clientY - rect.top
+    x: (evt.clientX - rect.left) * scaleX,
+    y: (evt.clientY - rect.top) * scaleY
   };
 }
 
