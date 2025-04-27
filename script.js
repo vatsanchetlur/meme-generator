@@ -1,6 +1,6 @@
 const imageUpload = document.getElementById('imageUpload');
-const topText = document.getElementById('topText');
-const bottomText = document.getElementById('bottomText');
+const topTextInput = document.getElementById('topText');
+const bottomTextInput = document.getElementById('bottomText');
 const generateBtn = document.getElementById('generate');
 const downloadBtn = document.getElementById('download');
 const fontSizeSlider = document.getElementById('fontSizeSlider');
@@ -9,7 +9,7 @@ const canvas = document.getElementById('memeCanvas');
 const ctx = canvas.getContext('2d');
 
 let uploadedImage = new Image();
-let texts = []; // 🎯 Store draggable text objects
+let texts = []; // draggable text objects
 let draggingText = null;
 let offsetX = 0;
 let offsetY = 0;
@@ -28,18 +28,18 @@ uploadedImage.onload = () => {
   drawMeme();
 };
 
-// Initial setup: create top and bottom text objects
+// Setup initial draggable texts
 function setupTexts() {
   texts = [
     {
-      text: topText.value.toUpperCase(),
+      text: topTextInput.value,
       x: canvas.width / 2,
       y: 60,
       fontSize: parseInt(fontSizeSlider.value),
       color: textColorPicker.value
     },
     {
-      text: bottomText.value.toUpperCase(),
+      text: bottomTextInput.value,
       x: canvas.width / 2,
       y: canvas.height - 20,
       fontSize: parseInt(fontSizeSlider.value),
@@ -62,14 +62,28 @@ function drawMeme() {
     ctx.strokeStyle = 'black';
     ctx.lineWidth = 3;
     ctx.textAlign = 'center';
-    ctx.fillText(t.text, t.x, t.y);
-    ctx.strokeText(t.text, t.x, t.y);
+    ctx.fillText(t.text.toUpperCase(), t.x, t.y);
+    ctx.strokeText(t.text.toUpperCase(), t.x, t.y);
   });
 }
 
+// Update text objects LIVE when user types
+topTextInput.addEventListener('input', () => {
+  texts[0].text = topTextInput.value;
+  drawMeme();
+});
+bottomTextInput.addEventListener('input', () => {
+  texts[1].text = bottomTextInput.value;
+  drawMeme();
+});
+
 // Handle Generate Button
 generateBtn.addEventListener('click', () => {
-  setupTexts();
+  // No reset! Just update styles and redraw
+  texts.forEach(t => {
+    t.fontSize = parseInt(fontSizeSlider.value);
+    t.color = textColorPicker.value;
+  });
   drawMeme();
 });
 
@@ -81,7 +95,7 @@ downloadBtn.addEventListener('click', () => {
   link.click();
 });
 
-// 🎯 Draggable Text Events
+// 🎯 Dragging Text Events
 canvas.addEventListener('mousedown', (e) => {
   const mousePos = getMousePos(canvas, e);
   draggingText = texts.find(t => isMouseOnText(t, mousePos));
@@ -114,7 +128,7 @@ function getMousePos(canvas, evt) {
 
 function isMouseOnText(t, pos) {
   ctx.font = `${t.fontSize}px Impact`;
-  const textWidth = ctx.measureText(t.text).width;
+  const textWidth = ctx.measureText(t.text.toUpperCase()).width;
   const textHeight = t.fontSize;
   return (
     pos.x >= t.x - textWidth / 2 &&
