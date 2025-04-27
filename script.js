@@ -146,13 +146,15 @@ function isMouseOnText(t, pos) {
 }
 
 // 🎯 Emoji Picker Events
-openEmojiPickerBtn.addEventListener('click', () => {
+openEmojiPickerBtn.addEventListener('click', (e) => {
+  e.stopPropagation(); // Prevent auto-closing when opening
   emojiCard.style.display = (emojiCard.style.display === 'none') ? 'flex' : 'none';
 });
 
 // Handle emoji clicks
 document.querySelectorAll('.emoji').forEach(emojiEl => {
-  emojiEl.addEventListener('click', () => {
+  emojiEl.addEventListener('click', (e) => {
+    e.stopPropagation(); // Prevent auto-closing when clicking emoji
     const emoji = emojiEl.textContent;
 
     if (document.activeElement === topTextInput) {
@@ -161,9 +163,19 @@ document.querySelectorAll('.emoji').forEach(emojiEl => {
     } else if (document.activeElement === bottomTextInput) {
       bottomTextInput.value += emoji;
       texts[1].text = bottomTextInput.value;
+    } else {
+      // Default: Insert into topTextInput
+      topTextInput.value += emoji;
+      texts[0].text = topTextInput.value;
     }
 
     drawMeme();
-    emojiCard.style.display = 'none'; // hide after picking
   });
+});
+
+// Hide emoji picker if clicking outside
+document.addEventListener('click', (e) => {
+  if (!emojiCard.contains(e.target) && e.target !== openEmojiPickerBtn) {
+    emojiCard.style.display = 'none';
+  }
 });

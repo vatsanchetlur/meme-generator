@@ -4,26 +4,50 @@
   <meta charset="UTF-8">
   <title>Meme Generator</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* Embedded CSS for emoji card style */
+    #emojiCard {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      background: white;
+      border: 1px solid black;
+      padding: 10px;
+      width: 300px;
+      position: absolute;
+      z-index: 1000;
+    }
+
+    .emoji {
+      font-size: 24px;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+
+    .emoji:hover {
+      transform: scale(1.3);
+    }
+  </style>
 </head>
 <body>
   <h1>Meme Generator 🎉</h1>
 
-  <input type="file" id="imageUpload"><br>
+  <input type="file" id="imageUpload"><br><br>
 
-  <input type="text" id="topText" placeholder="Top Text"><br>
-  <input type="text" id="bottomText" placeholder="Bottom Text"><br>
+  <input type="text" id="topText" placeholder="Top Text"><br><br>
+  <input type="text" id="bottomText" placeholder="Bottom Text"><br><br>
 
   <label for="fontSizeSlider">Font Size:</label>
-  <input type="range" id="fontSizeSlider" min="10" max="100" value="50"><br>
+  <input type="range" id="fontSizeSlider" min="10" max="100" value="50"><br><br>
 
   <label for="textColor">Text Color:</label>
-  <input type="color" id="textColor" value="#FFFFFF"><br>
+  <input type="color" id="textColor" value="#FFFFFF"><br><br>
 
   <!-- 🎯 Emoji Picker Button -->
   <button id="openEmojiPicker">😊 Pick Emoji</button>
 
   <!-- 🎯 Emoji Card Popup -->
-  <div id="emojiCard" style="display:none; position:absolute; background:white; border:1px solid black; padding:10px; width:300px; flex-wrap:wrap; z-index:1000;">
+  <div id="emojiCard" style="display:none;">
     <span class="emoji">😂</span>
     <span class="emoji">🔥</span>
     <span class="emoji">😎</span>
@@ -44,6 +68,7 @@
     <span class="emoji">😡</span>
     <span class="emoji">💯</span>
     <span class="emoji">🤩</span>
+    <!-- Feel free to add more emojis here -->
   </div>
 
   <br><br>
@@ -51,7 +76,9 @@
   <button id="generate">Generate Meme</button>
   <button id="download">Download Meme</button>
 
-  <canvas id="memeCanvas" style="border:2px solid black; margin-top:20px;"></canvas>
+  <br><br>
+
+  <canvas id="memeCanvas" style="border:2px solid black; margin-top:20px; max-width:90%;"></canvas>
 
   <script src="script.js"></script>
 </body>
