@@ -9,6 +9,10 @@ const openEmojiPickerBtn = document.getElementById('openEmojiPicker');
 const emojiCard = document.getElementById('emojiCard');
 const canvas = document.getElementById('memeCanvas');
 const ctx = canvas.getContext('2d');
+const fontFamilySelect = document.getElementById('fontFamilySelect');
+const addTextBtn = document.getElementById('addTextBtn');
+
+
 
 let uploadedImage = new Image();
 let texts = []; // draggable text objects
@@ -62,7 +66,7 @@ function drawMeme() {
   ctx.drawImage(uploadedImage, 0, 0);
 
   texts.forEach(t => {
-    ctx.font = `${t.fontSize}px Impact`;
+    ctx.font = `${t.fontSize}px ${fontFamilySelect.value}`;
     ctx.fillStyle = t.color;
     ctx.strokeStyle = 'black';
     ctx.lineWidth = 3;
@@ -171,6 +175,17 @@ document.querySelectorAll('.emoji').forEach(emojiEl => {
 
     drawMeme();
   });
+});
+
+addTextBtn.addEventListener('click', () => {
+  texts.push({
+    text: "New Text",
+    x: canvas.width / 2,
+    y: canvas.height / 2,
+    fontSize: parseInt(fontSizeSlider.value),
+    color: textColorPicker.value
+  });
+  drawMeme();
 });
 
 // Hide emoji picker if clicking outside
