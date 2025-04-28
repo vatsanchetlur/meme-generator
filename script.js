@@ -5,18 +5,18 @@ const generateBtn = document.getElementById('generate');
 const downloadBtn = document.getElementById('download');
 const fontSizeSlider = document.getElementById('fontSizeSlider');
 const textColorPicker = document.getElementById('textColor');
+const fontFamilySelect = document.getElementById('fontFamilySelect');
 const openEmojiPickerBtn = document.getElementById('openEmojiPicker');
 const emojiCard = document.getElementById('emojiCard');
+const addTextBtn = document.getElementById('addTextBtn');
+const editTextBox = document.getElementById('editTextBox');
 const canvas = document.getElementById('memeCanvas');
 const ctx = canvas.getContext('2d');
-const fontFamilySelect = document.getElementById('fontFamilySelect');
-const addTextBtn = document.getElementById('addTextBtn');
-
-
 
 let uploadedImage = new Image();
 let texts = []; // draggable text objects
 let draggingText = null;
+let selectedTextObject = null;
 let offsetX = 0;
 let offsetY = 0;
 
@@ -103,13 +103,17 @@ downloadBtn.addEventListener('click', () => {
   link.click();
 });
 
-// 🎯 Dragging Text Events
+// Dragging Events
 canvas.addEventListener('mousedown', (e) => {
   const mousePos = getMousePos(canvas, e);
   draggingText = texts.find(t => isMouseOnText(t, mousePos));
+
   if (draggingText) {
     offsetX = mousePos.x - draggingText.x;
     offsetY = mousePos.y - draggingText.y;
+    selectedTextObject = draggingText;
+  } else {
+    selectedTextObject = null;
   }
 });
 
@@ -126,6 +130,26 @@ canvas.addEventListener('mouseup', () => {
   draggingText = null;
 });
 
+// Double-click to Edit
+canvas.addEventListener('dblclick', (e) => {
+  if (selectedTextObject) {
+    const rect = canvas.getBoundingClientRect();
+    editTextBox.style.left = `${e.clientX}px`;
+    editTextBox.style.top = `${e.clientY}px`;
+    editTextBox.style.display = 'block';
+    editTextBox.value = selectedTextObject.text;
+    editTextBox.focus();
+  }
+});
+
+editTextBox.addEventListener('blur', () => {
+  if (selectedTextObject) {
+    selectedTextObject.text = editTextBox.value;
+    drawMeme();
+  }
+  editTextBox.style.display = 'none';
+});
+
 function getMousePos(canvas, evt) {
   const rect = canvas.getBoundingClientRect();
   const scaleX = canvas.width / rect.width;
@@ -138,7 +162,7 @@ function getMousePos(canvas, evt) {
 }
 
 function isMouseOnText(t, pos) {
-  ctx.font = `${t.fontSize}px Impact`;
+  ctx.font = `${t.fontSize}px ${fontFamilySelect.value}`;
   const textWidth = ctx.measureText(t.text.toUpperCase()).width;
   const textHeight = t.fontSize;
   return (
@@ -149,16 +173,15 @@ function isMouseOnText(t, pos) {
   );
 }
 
-// 🎯 Emoji Picker Events
+// Emoji Picker Events
 openEmojiPickerBtn.addEventListener('click', (e) => {
-  e.stopPropagation(); // Prevent auto-closing when opening
+  e.stopPropagation();
   emojiCard.style.display = (emojiCard.style.display === 'none') ? 'flex' : 'none';
 });
 
-// Handle emoji clicks
 document.querySelectorAll('.emoji').forEach(emojiEl => {
   emojiEl.addEventListener('click', (e) => {
-    e.stopPropagation(); // Prevent auto-closing when clicking emoji
+    e.stopPropagation();
     const emoji = emojiEl.textContent;
 
     if (document.activeElement === topTextInput) {
@@ -167,16 +190,21 @@ document.querySelectorAll('.emoji').forEach(emojiEl => {
     } else if (document.activeElement === bottomTextInput) {
       bottomTextInput.value += emoji;
       texts[1].text = bottomTextInput.value;
-    } else {
-      // Default: Insert into topTextInput
-      topTextInput.value += emoji;
-      texts[0].text = topTextInput.value;
+    } else if (selectedTextObject) {
+      selectedTextObject.text += emoji;
     }
 
     drawMeme();
   });
 });
 
+document.addEventListener('click', (e) => {
+  if (!emojiCard.contains(e.target) && e.target !== openEmojiPickerBtn) {
+    emojiCard.style.display = 'none';
+  }
+});
+
+// Add new text box
 addTextBtn.addEventListener('click', () => {
   texts.push({
     text: "New Text",
@@ -186,11 +214,4 @@ addTextBtn.addEventListener('click', () => {
     color: textColorPicker.value
   });
   drawMeme();
-});
-
-// Hide emoji picker if clicking outside
-document.addEventListener('click', (e) => {
-  if (!emojiCard.contains(e.target) && e.target !== openEmojiPickerBtn) {
-    emojiCard.style.display = 'none';
-  }
 });

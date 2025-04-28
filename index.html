@@ -5,7 +5,6 @@
   <title>Meme Generator</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* Embedded CSS for emoji card style */
     #emojiCard {
       display: flex;
       flex-wrap: wrap;
@@ -44,7 +43,7 @@
   <input type="color" id="textColor" value="#FFFFFF"><br><br>
 
   <label for="fontFamilySelect">Font Family:</label>
-    <select id="fontFamilySelect">
+  <select id="fontFamilySelect">
     <option value="Impact">Impact</option>
     <option value="Arial">Arial</option>
     <option value="Comic Sans MS">Comic Sans MS</option>
@@ -53,13 +52,9 @@
   </select>
   <br><br>
 
-  <!-- 🎯 Emoji Picker Button -->
   <button id="openEmojiPicker">😊 Pick Emoji</button>
-
   <button id="addTextBtn">➕ Add Text</button>
-  <br><br>
 
-  <!-- 🎯 Emoji Card Popup -->
   <div id="emojiCard" style="display:none;">
     <span class="emoji">😂</span>
     <span class="emoji">🔥</span>
@@ -81,7 +76,6 @@
     <span class="emoji">😡</span>
     <span class="emoji">💯</span>
     <span class="emoji">🤩</span>
-    <!-- Feel free to add more emojis here -->
   </div>
 
   <br><br>
@@ -92,6 +86,9 @@
   <br><br>
 
   <canvas id="memeCanvas" style="border:2px solid black; margin-top:20px; max-width:90%;"></canvas>
+
+  <!-- 🎯 Hidden Edit Box -->
+  <input type="text" id="editTextBox" style="position:absolute; display:none; z-index:2000; font-size:18px;">
 
   <script src="script.js"></script>
 </body>
